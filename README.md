@@ -110,7 +110,7 @@ The system predicts whether the given rainfall conditions indicate:
 ## 🎥 Demo Video
 
 ```text
-https://youtu.be/SsiqQE0wcdo?si=cWIfrux3cNGqMfSk
+(https://youtu.be/MrSWGymbBAI?si=3ytkfP0rCGHQI_Ja)
 ```
 
 ---
