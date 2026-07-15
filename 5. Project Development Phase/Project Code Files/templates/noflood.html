@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block title %}Rising Waters - Safe Margin{% endblock %}
+
+{% block content %}
+<div class="result-card glass-card noflood">
+  <div class="badge-result noflood">
+    <span style="display:inline-block; width:8px; height:8px; background-color:var(--color-safe); border-radius:50%;"></span>
+    Precipitation Safe
+  </div>
+
+  <!-- SVG gauge risk percentage -->
+  <div class="gauge-container">
+    <svg class="gauge-svg" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="successGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#10b981" />
+          <stop offset="100%" stop-color="#059669" />
+        </linearGradient>
+      </defs>
+      <circle class="gauge-bg" cx="50" cy="50" r="40" />
+      <circle class="gauge-progress noflood" cx="50" cy="50" r="40" 
+              stroke-dasharray="251.2" 
+              stroke-dashoffset="{{ 251.2 - (251.2 * risk / 100) }}" />
+    </svg>
+    <div class="gauge-text">
+      <div class="gauge-percent" style="color: var(--color-safe);">{{ risk }}%</div>
+      <div class="gauge-label">Risk Index</div>
+    </div>
+  </div>
+
+  <h2 class="result-title">Safe Precipitation Margins</h2>
+  <p class="result-desc">
+    Calculated indices are within normal thresholds. There is no active threat of flooding in this division based on current parameters.
+  </p>
+
+  <div class="advice-box">
+    <div class="advice-title" style="color: var(--color-safe);">
+      ✔️ Standard Recommendations
+    </div>
+    <ul class="advice-list">
+      <li class="advice-item safe-item">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>It is safe to travel and perform standard operations.</span>
+      </li>
+      <li class="advice-item safe-item">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Maintain standard stormwater drains to prevent localized ponding.</span>
+      </li>
+      <li class="advice-item safe-item">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Continue monitoring seasonal forecast changes.</span>
+      </li>
+    </ul>
+  </div>
+
+  <a href="/predict-page" class="btn btn-secondary" style="width: 100%; justify-content: center;">Run Another Analysis</a>
+</div>
+{% endblock %}

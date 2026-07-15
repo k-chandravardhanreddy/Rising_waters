@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+
+{% block title %}Rising Waters - Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="pulse-dot"></span> ML Prediction Model
+    </div>
+    <h1 class="hero-title">Predict Flood Risks Before They <span>Rise</span></h1>
+    <p class="hero-desc">
+      Rising Waters utilizes advanced machine learning classifiers trained on historical meteorological data to forecast local flood risks based on seasonal rainfall indices.
+    </p>
+    <div class="cta-group">
+      <a href="/predict-page" class="btn btn-primary">Start Prediction Dashboard &rarr;</a>
+      <a href="#about" class="btn btn-secondary">Learn More</a>
+    </div>
+  </div>
+  <div class="glass-card hero-card" style="display: flex; flex-direction: column; justify-content: center; gap: 1.5rem;">
+    <div style="font-size: 3.5rem; color: var(--accent-cyan);">⛈️</div>
+    <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700;">Rainfall Index Analysis</h2>
+    <p style="color: var(--text-secondary); font-size: 0.95rem;">
+      Analyzing seasonal and annual precipitation variances from 1901 to 2015 to deliver high-fidelity flood warning predictions.
+    </p>
+  </div>
+</section>
+
+<section id="about" class="features-grid">
+  <div class="glass-card feature-card">
+    <div class="feature-icon">📊</div>
+    <h3>Historical Data Analysis</h3>
+    <p>Trained on over a century of precipitation records, our model recognizes complex rainfall distributions across various weather divisions.</p>
+  </div>
+  <div class="glass-card feature-card">
+    <div class="feature-icon">🧠</div>
+    <h3>XGBoost & RandomForest</h3>
+    <p>Using state-of-the-art ensemble models, we evaluate multiple seasonal rainfall inputs to predict risks with up to 99% validation accuracy.</p>
+  </div>
+  <div class="glass-card feature-card">
+    <div class="feature-icon">🛡️</div>
+    <h3>Safety Guidance</h3>
+    <p>When high risk is detected, the dashboard instantly highlights evacuation steps, safety check-lists, and precautionary actions.</p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends 'layout.html' %}
+
+{% block title %}Rising Waters - Predict Flood Risk{% endblock %}
+
+{% block content %}
+<div class="predict-container">
+  <div class="page-header">
+    <h2 class="page-title">Flood Prediction Dashboard</h2>
+    <p class="page-subtitle">Adjust seasonal and annual precipitation variables in millimeters (mm)</p>
+  </div>
+
+  <div class="glass-card">
+    <form action="/predict" method="POST" id="predictForm">
+      
+      <!-- Annual Rainfall -->
+      <div class="form-group">
+        <div class="input-header">
+          <label class="form-label" for="annual">
+            Annual Rainfall
+            <span class="info-tooltip" data-tip="Total precipitation throughout the entire year (historically between 60mm and 6300mm in India).">?</span>
+          </label>
+        </div>
+        <div class="input-wrapper">
+          <input type="range" class="form-range" id="annual_slider" min="50" max="6500" value="1400" step="10">
+          <input type="number" class="form-number" id="annual" name="annual" min="50" max="6500" value="1400" step="0.1" required>
+        </div>
+      </div>
+
+      <!-- Jan-Feb Rainfall -->
+      <div class="form-group">
+        <div class="input-header">
+          <label class="form-label" for="janfeb">
+            Jan - Feb Rainfall
+            <span class="info-tooltip" data-tip="Precipitation during the winter months of January and February.">?</span>
+          </label>
+        </div>
+        <div class="input-wrapper">
+          <input type="range" class="form-range" id="janfeb_slider" min="0" max="700" value="35" step="1">
+          <input type="number" class="form-number" id="janfeb" name="janfeb" min="0" max="700" value="35" step="0.1" required>
+        </div>
+      </div>
+
+      <!-- Mar-May Rainfall -->
+      <div class="form-group">
+        <div class="input-header">
+          <label class="form-label" for="marmay">
+            Mar - May Rainfall
+            <span class="info-tooltip" data-tip="Precipitation during the pre-monsoon summer months of March, April, and May.">?</span>
+          </label>
+        </div>
+        <div class="input-wrapper">
+          <input type="range" class="form-range" id="marmay_slider" min="0" max="1800" value="150" step="5">
+          <input type="number" class="form-number" id="marmay" name="marmay" min="0" max="1800" value="150" step="0.1" required>
+        </div>
+      </div>
+
+      <!-- Jun-Sep Rainfall -->
+      <div class="form-group">
+        <div class="input-header">
+          <label class="form-label" for="junsep">
+            Jun - Sep Rainfall
+            <span class="info-tooltip" data-tip="Precipitation during the main southwest monsoon months of June, July, August, and September.">?</span>
+          </label>
+        </div>
+        <div class="input-wrapper">
+          <input type="range" class="form-range" id="junsep_slider" min="50" max="4600" value="900" step="10">
+          <input type="number" class="form-number" id="junsep" name="junsep" min="50" max="4600" value="900" step="0.1" required>
+        </div>
+      </div>
+
+      <!-- Oct-Dec Rainfall -->
+      <div class="form-group">
+        <div class="input-header">
+          <label class="form-label" for="octdec">
+            Oct - Dec Rainfall
+            <span class="info-tooltip" data-tip="Precipitation during the post-monsoon months of October, November, and December.">?</span>
+          </label>
+        </div>
+        <div class="input-wrapper">
+          <input type="range" class="form-range" id="octdec_slider" min="0" max="1300" value="120" step="5">
+          <input type="number" class="form-number" id="octdec" name="octdec" min="0" max="1300" value="120" step="0.1" required>
+        </div>
+      </div>
+
+      <!-- Cross-Field Validation Alert Box -->
+      <div id="validationWarning" class="glass-card" style="display: none; padding: 1rem; border-color: rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.04); margin-bottom: 2rem; border-radius: 12px; font-size: 0.9rem; color: #f87171;">
+        <span style="font-weight: 700; margin-right: 0.5rem;">⚠️ Sum Check Notice:</span> 
+        The sum of seasonal rainfalls (<span id="seasonalSum">0</span> mm) does not match the entered Annual rainfall (<span id="enteredAnnual">0</span> mm).
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1.2rem;">
+          Run Flood Risk Prediction Analysis &rarr;
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- loading animation state -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Analyzing Precipitation Indexes...</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Inputs & Sliders pairing
+    const pairings = [
+      { num: 'annual', slider: 'annual_slider' },
+      { num: 'janfeb', slider: 'janfeb_slider' },
+      { num: 'marmay', slider: 'marmay_slider' },
+      { num: 'junsep', slider: 'junsep_slider' },
+      { num: 'octdec', slider: 'octdec_slider' }
+    ];
+
+    pairings.forEach(pair => {
+      const numInput = document.getElementById(pair.num);
+      const sliderInput = document.getElementById(pair.slider);
+
+      numInput.addEventListener('input', () => {
+        sliderInput.value = numInput.value;
+        validateSum();
+      });
+
+      sliderInput.addEventListener('input', () => {
+        numInput.value = sliderInput.value;
+        validateSum();
+      });
+    });
+
+    // Cross validation check (Annual sum should roughly equal seasonal sum)
+    const annualVal = document.getElementById('annual');
+    const janfebVal = document.getElementById('janfeb');
+    const marmayVal = document.getElementById('marmay');
+    const junsepVal = document.getElementById('junsep');
+    const octdecVal = document.getElementById('octdec');
+    const warningBox = document.getElementById('validationWarning');
+    const seasonalSumText = document.getElementById('seasonalSum');
+    const enteredAnnualText = document.getElementById('enteredAnnual');
+
+    function validateSum() {
+      const annual = parseFloat(annualVal.value) || 0;
+      const jan = parseFloat(janfebVal.value) || 0;
+      const mar = parseFloat(marmayVal.value) || 0;
+      const jun = parseFloat(junsepVal.value) || 0;
+      const oct = parseFloat(octdecVal.value) || 0;
+
+      const sum = jan + mar + jun + oct;
+      const diff = Math.abs(annual - sum);
+      const tolerance = annual * 0.12; // Allow 12% tolerance
+
+      if (diff > tolerance) {
+        warningBox.style.display = 'block';
+        seasonalSumText.textContent = sum.toFixed(1);
+        enteredAnnualText.textContent = annual.toFixed(1);
+      } else {
+        warningBox.style.display = 'none';
+      }
+    }
+
+    // Run initial validation
+    validateSum();
+
+    // Intercept form submit for loading effect
+    const form = document.getElementById('predictForm');
+    const overlay = document.getElementById('loadingOverlay');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      overlay.classList.add('active');
+      
+      // Submit form after 1.5s delay for rich visual effect
+      setTimeout(() => {
+        form.submit();
+      }, 1500);
+    });
+  });
+</script>
+{% endblock %}

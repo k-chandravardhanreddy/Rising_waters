@@ -1,0 +1,71 @@
+{% extends 'layout.html' %}
+
+{% block title %}Rising Waters - High Flood Risk{% endblock %}
+
+{% block content %}
+<div class="result-card glass-card flood">
+  <div class="badge-result flood">
+    <span style="display:inline-block; width:8px; height:8px; background-color:var(--color-danger); border-radius:50%;"></span>
+    Flood Risk Alert
+  </div>
+
+  <!-- SVG gauge risk percentage -->
+  <div class="gauge-container">
+    <svg class="gauge-svg" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="dangerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#f43f5e" />
+          <stop offset="100%" stop-color="#e11d48" />
+        </linearGradient>
+      </defs>
+      <circle class="gauge-bg" cx="50" cy="50" r="40" />
+      <circle class="gauge-progress flood" cx="50" cy="50" r="40" 
+              stroke-dasharray="251.2" 
+              stroke-dashoffset="{{ 251.2 - (251.2 * risk / 100) }}" />
+    </svg>
+    <div class="gauge-text">
+      <div class="gauge-percent" style="color: var(--color-danger);">{{ risk }}%</div>
+      <div class="gauge-label">Risk Index</div>
+    </div>
+  </div>
+
+  <h2 class="result-title">High Probability of Flood</h2>
+  <p class="result-desc">
+    Precipitation index calculations indicate high seasonal water accumulation. Local flooding risk is significantly elevated.
+  </p>
+
+  <div class="advice-box">
+    <div class="advice-title" style="color: var(--color-danger);">
+      ⚠️ Recommended Safety Actions
+    </div>
+    <ul class="advice-list">
+      <li class="advice-item danger-item">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Prepare emergency food, drinking water, and essential medicines.</span>
+      </li>
+      <li class="advice-item danger-item">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Track local weather broadcasts and announcements for immediate warnings.</span>
+      </li>
+      <li class="advice-item danger-item">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Disconnect electric appliances and relocate valuables to higher shelves or floors.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="interactive-map-placeholder">
+    <div class="map-icon">🗺️</div>
+    <div class="map-placeholder-title">Interactive Evacuation Route Plan</div>
+    <div class="map-placeholder-desc">Evacuation plan calculations loaded successfully. Coordinate with local civil defense channels.</div>
+  </div>
+
+  <a href="/predict-page" class="btn btn-secondary" style="width: 100%; justify-content: center;">Run Another Analysis</a>
+</div>
+{% endblock %}
